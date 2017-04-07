@@ -18,11 +18,11 @@ inMandelbrotSet p = all fairlyClose (mandelbrot p)
 
 fracImage :: [color] -> Point -> color
 fracImage palette = (palette!!)
-										.length
-										.take n
-										.takeWhile  fairlyClose
-										.mandelbrot
-										where n = length palette - 1
+	.length
+	.take n
+	.takeWhile  fairlyClose
+	.mandelbrot
+	where n = length palette - 1
 
 
 grid :: Int -> Int -> Point -> Point -> Grid Point

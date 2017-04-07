@@ -8,5 +8,6 @@ copy :: Int -> a -> [a]
 copy n x = take n (repeat x)
 
 multiApply :: (a -> a) -> Int -> a -> a
-multiApply f n x 	| n > 0 = last (take (n + 1) (iterate f x))
-									| n <= 0 = x
+multiApply f n x
+	| n > 0 = last (take (n + 1) (iterate f x))
+	| n <= 0 = x
