@@ -31,7 +31,7 @@ for :: Int -> Float -> Float -> [Float]
 for n min max = take n [ min, min+delta .. ]
 		where delta = (max-min) / fromIntegral (n-1)
 
-mandGrid = grid 79  37 (-2.25, -1.5)  (0.75, 1.5)
+mandGrid = grid 79 37 (-2.25, -1.5)  (0.75, 1.5)
 juliaGrid = grid 79 37 (-1.5, -1.5) (1.5, 1.5)
 
 type Image color = Point -> color
