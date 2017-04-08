@@ -2,19 +2,19 @@ type Point = (Float,Float)
 type Grid a = [[a]]
 type Image color = Point -> color
 
+{--
+Modified the next function by adding constant multipliers
+for the left value of the pointer and increased multiplier
+from 2 to 3 on the right value.
+--}
 next :: Point -> Point -> Point
-next (u,v) (x,y) = (x*x-y*y+u, 2*x*y+v)
+next (u,v) (x,y) = (2*x*x-1.1*y*y+u, 3*x*y+v)
 
 mandelbrot :: Point -> [Point]
 mandelbrot p = iterate (next p) (0,0)
--- applying (next p) to (0,0) iteratively
 
 fairlyClose :: Point -> Bool
 fairlyClose (u,v) = (u*u + v*v) < 100
-
-inMandelbrotSet :: Point -> Bool
-inMandelbrotSet p = all fairlyClose (mandelbrot p)
--- grabbing only ones filtered by fairlyClose
 
 fracImage :: [color] -> Point -> color
 fracImage palette = (palette!!)
@@ -34,8 +34,12 @@ for :: Int -> Float -> Float -> [Float]
 for n min max = take n [ min, min+delta .. ]
 	where delta = (max-min) / fromIntegral (n-1)
 
-mandGrid = grid 79 37 (-2.25, -1.5)  (0.75, 1.5)
-juliaGrid = grid 79 37 (-1.5, -1.5) (1.5, 1.5)
+{--
+Modified the grid size and the range of points.
+Slightly increased the grid size from 79, 37 to 90, 50.
+Changed xmax from 1.5 to 1.
+--}
+jongGrid = grid 90 50 (-1.5, -1.5) (1, 1.5)
 
 sample :: Grid Point -> Image color -> Grid color
 sample points image = map (map image) points
@@ -44,10 +48,14 @@ draw :: [color] -> Grid Point -> (Grid color -> pic) -> pic
 draw palette grid render
 	= render (sample grid (fracImage palette))
 
+{--
+Modified a set of characters to be printed.
+--}
 charPalette :: [Char]
-charPalette = "    ,.`\"~:;o-!|?/<>X+={^O#%&@8*$"
+charPalette = "    ^*()[]+-/=<>!@#$%&1234567890"
 
 charRender :: Grid Char -> IO ()
 charRender = putStr . unlines
 
-example1  = draw charPalette mandGrid charRender
+example = draw charPalette jongGrid charRender
+
