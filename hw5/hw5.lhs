@@ -272,7 +272,10 @@ of FilePaths by looking at the contents if each file ...
 QUESTION 5: Define a function of the following type:
 
 > contents    :: (String -> Bool) -> FilePath -> IO Bool
-> contents p f = undefined --- replace with your own code
+> contents p f = do b <- doesFileExist f
+>                   if b then do h <- readFile f;
+>															do return (p h)
+>                        else return False
 
 The idea here is that, for an appropriately typed argument p, the
 expression   contents p   should produce a filter that keeps only
@@ -317,7 +320,12 @@ QUESTION 6: Define a filter command of the following type that
 allows for user interation in a find command:
 
 > queryUser  :: String -> IO Bool
-> queryUser s = undefined --- replace with your own code!
+> queryUser s = do putStr (s ++ " (y/n)?");
+>									 l <- getLine;
+>									 case l of
+>									 	 "y" 			 -> return True
+>									 	 otherwise -> return False
+>
 
 More specifically, queryUser should display the FilePath that it
 is given, then a prompt " (y/n)?", and then wait for the user to
