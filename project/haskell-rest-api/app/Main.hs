@@ -8,7 +8,10 @@ import Lib
 server :: ScottyM()
 server = do
 	get "/api" $ do
-		text "works!"
+		text "works!!"
+	get "/api2" $ do
+		text "works2!!"
+
 
 main :: IO ()
 main = do
