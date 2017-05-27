@@ -13,6 +13,9 @@ import Database.PostgreSQL.Simple.FromRow
 import Database.PostgreSQL.Simple.ToField
 import GHC.Generics
 
+
+
+
 server :: Connection -> ScottyM()
 server conn = do
 	get "/api" $ do
@@ -27,6 +30,10 @@ server conn = do
 		item <- jsonData :: ActionM ChecklistItem
 		newItem <- liftIO (insertChecklist conn item)
 		json newItem
+	get "/SumAPI/:word" $ do
+		beam <- param "word"
+		html $ mconcat ["<h1>Scotty, ", beam, " me up!</h1>"]
+
 
 selectChecklistQuery = "select id, name, finished, checklist from checklistitems where checklist = (?)"
 insertItemsQuery = "insert into checklistitems (name, finished, checklist) values (?, ?, ?) returning id"
