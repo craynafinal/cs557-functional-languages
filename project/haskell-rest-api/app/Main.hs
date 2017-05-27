@@ -13,9 +13,6 @@ import Database.PostgreSQL.Simple.FromRow
 import Database.PostgreSQL.Simple.ToField
 import GHC.Generics
 
-
-
-
 server :: Connection -> ScottyM()
 server conn = do
 	get "/api" $ do
@@ -30,10 +27,48 @@ server conn = do
 		item <- jsonData :: ActionM ChecklistItem
 		newItem <- liftIO (insertChecklist conn item)
 		json newItem
+	post "/SumAPI/test" $ do
+		item <- jsonData :: ActionM SumNum
+		newItem <- liftIO (sumNumber conn item)
+		json newItem
+	get "/SumAPI/test2" $ do
+		items <- liftIO (query_ conn selectNumberQuery :: IO [SumNum])
+		json items
 	get "/SumAPI/:word" $ do
-		beam <- param "word"
-		html $ mconcat ["<h1>Scotty, ", beam, " me up!</h1>"]
+		number <- param "word"
+		item <- "{ number: " ++ number ++ " }"
+		newItem <- liftIO (sumNumber conn item)
+		json newItem
+--		html $ mconcat ["<h1>Scotty, ", beam, " me up!</h1>"]
 
+updateNumberQuery = "UPDATE sumNumber SET number = ? WHERE id = 1 returning number"
+
+sumNumber :: Connection -> SumNum -> IO SumNum
+sumNumber conn item = do
+	[Only number] <- query conn updateNumberQuery item
+	return item { number = number }
+
+selectNumberQuery = "SELECT number from sumNumber"
+
+data SumNum = SumNum { number :: Maybe Int } deriving (Show, Generic)
+
+instance FromRow SumNum where
+	fromRow = SumNum <$> field
+
+instance ToRow SumNum where
+	toRow c = [toField $ number c]
+
+instance ToJSON SumNum
+instance FromJSON SumNum
+
+main :: IO ()
+main = do
+	conn <- connectPostgreSQL ("host='localhost' user='postgres' dbname='postgres' password='password'")
+	scotty 8080 $ server conn
+
+
+
+-- example codes below
 
 selectChecklistQuery = "select id, name, finished, checklist from checklistitems where checklist = (?)"
 insertItemsQuery = "insert into checklistitems (name, finished, checklist) values (?, ?, ?) returning id"
@@ -49,12 +84,6 @@ insertChecklist conn item = do
     return item { checklistItemId = id }
 
 
-main :: IO ()
-main = do
-	conn <- connectPostgreSQL ("host='localhost' user='postgres' dbname='postgres' password='password'")
-	scotty 8080 $ server conn
-
--- example codes below
 data Checklist = Checklist { checklistId :: Maybe Int,
     title :: String,
     checklistItems :: [ChecklistItem]} deriving (Show, Generic)
