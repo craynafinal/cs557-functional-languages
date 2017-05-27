@@ -6,7 +6,7 @@ module Main where
 import Web.Scotty
 import Lib
 import Control.Monad.IO.Class
-import Data.Aeson (FromJSON, ToJSON)
+import Data.Aeson (FromJSON, ToJSON, object)
 import Database.PostgreSQL.Simple
 import Database.PostgreSQL.Simple.ToRow
 import Database.PostgreSQL.Simple.FromRow
@@ -34,11 +34,19 @@ server conn = do
 	get "/SumAPI/test2" $ do
 		items <- liftIO (query_ conn selectNumberQuery :: IO [SumNum])
 		json items
-	get "/SumAPI/:word" $ do
-		number <- param "word"
-		item <- "{ number: " ++ number ++ " }"
-		newItem <- liftIO (sumNumber conn item)
-		json newItem
+	get "/SumAPI/:number" $ do
+		number <- param "number"
+		--item <- Object $ M.fromList [ ("number" : number)]
+--		newItem <- liftIO (sumNumber conn (SumNum { number = number } ))
+--		json SumNum number
+		--json (filter (
+		text number
+
+
+--		item <- mconcat ["{ number: ", number, " }"]:: ActionM SumNum
+--		html $ mconcat ["dd", number, "dd"]
+--		newItem <- liftIO (sumNumber conn item)
+--		json newItem
 --		html $ mconcat ["<h1>Scotty, ", beam, " me up!</h1>"]
 
 updateNumberQuery = "UPDATE sumNumber SET number = ? WHERE id = 1 returning number"
@@ -59,6 +67,8 @@ instance ToRow SumNum where
 	toRow c = [toField $ number c]
 
 instance ToJSON SumNum
+--	toJSON s = object [	"number" .= number s ]
+
 instance FromJSON SumNum
 
 main :: IO ()
