@@ -27,11 +27,11 @@ server conn = do
 		item <- jsonData :: ActionM ChecklistItem
 		newItem <- liftIO (insertChecklist conn item)
 		json newItem
-	post "/SumAPI/test" $ do
+	post "/SumAPI/addNumber" $ do
 		item <- jsonData :: ActionM SumNum
 		newItem <- liftIO (sumNumber conn item)
 		json newItem
-	get "/SumAPI/test2" $ do
+	get "/SumAPI/showNumber" $ do
 		items <- liftIO (query_ conn selectNumberQuery :: IO [SumNum])
 		json items
 	get "/SumAPI/:number" $ do
