@@ -5,7 +5,6 @@ module Main where
 import Lib
 
 import Web.Scotty
-
 import Database.PostgreSQL.Simple
 
 main :: IO ()
