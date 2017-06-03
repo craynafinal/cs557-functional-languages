@@ -1,21 +1,27 @@
 {-# LANGUAGE OverloadedStrings, QuasiQuotes #-}
-module Test where
+module Main where
 
-import           Test.Hspec
-import           Test.Hspec.Wai
-import           Test.Hspec.Wai.JSON
+import Test.Hspec
+import Test.Hspec.Wai
+import Test.Hspec.Wai.JSON
 
-import           Network.Wai (Application)
-import qualified Web.Scotty as S
-import           Data.Aeson (Value(..), object, (.=))
+import Lib
 
---import 					 Lib
-import Main
+import Database.PostgreSQL.Simple
 
 main :: IO ()
-main = hspec $ do
-  describe "Verify that bassbull outputs the correct data" $ do
-    it "equals zero" $ do
---      theSum <- getAtBatsSum "batting.csv"
---      theSum `shouldBe` 4858210
-			"someFunc" `shouldBe` "someFunc"
+main = do
+  conn <- connectPostgreSQL ("host='localhost' user='postgres' dbname='postgres' password='password'")
+  hspec $ do
+    describe "Verify that sumNumber works fine with resetNumberQuery" $ do
+      it "equals zero" $ do
+        item <- liftIO (sumNumber conn (SumNum (Just 0)) resetNumberQuery)
+        item `shouldBe` SumNum (Just 0)
+    describe "Verify that sumNumber works fine with updateNumberQuery" $ do
+      it "equals one" $ do
+        item <- liftIO (sumNumber conn (SumNum (Just 1)) updateNumberQuery)
+        item `shouldBe` SumNum (Just 1)
+    describe "Verify that sumNumber works fine with selectNumberQuery" $ do
+      it "equals one" $ do
+        item <- liftIO (query_ conn selectNumberQuery :: IO [SumNum])
+        item `shouldBe` [SumNum (Just 1)]

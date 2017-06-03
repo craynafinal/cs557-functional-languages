@@ -34,7 +34,7 @@ sumNumber conn item qString = do
   [Only number] <- query conn qString item
   return item { number = number }
 
-data SumNum = SumNum { number :: Maybe Int } deriving (Show, Generic)
+data SumNum = SumNum { number :: Maybe Int } deriving (Show, Generic, Eq)
 
 instance FromRow SumNum where
   fromRow = SumNum <$> field
