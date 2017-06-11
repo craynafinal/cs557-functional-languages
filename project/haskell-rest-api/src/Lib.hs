@@ -13,7 +13,6 @@ import Database.PostgreSQL.Simple.ToField
 import GHC.Generics
 
 import VizTree
-import Data.Text.Lazy
 
 server :: Connection -> ScottyM()
 server conn = do
