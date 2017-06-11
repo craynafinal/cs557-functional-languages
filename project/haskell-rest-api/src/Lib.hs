@@ -12,6 +12,9 @@ import Database.PostgreSQL.Simple.FromRow
 import Database.PostgreSQL.Simple.ToField
 import GHC.Generics
 
+import VizTree
+import Data.Text.Lazy
+
 server :: Connection -> ScottyM()
 server conn = do
   post "/SumAPI/addNumber" $ do
@@ -24,6 +27,13 @@ server conn = do
   get "/SumAPI/resetNumber" $ do
     item <- liftIO (sumNumber conn (SumNum (Just 0)) resetNumberQuery)
     json item
+  get "/VizTree/:l1/:l2/:r1/:r2" $ do
+    l1 <- param "l1"
+    l2 <- param "l2"
+    r1 <- param "r1"
+    r2 <- param "r2"
+    _ <- liftIO (viz [[(read l1 :: Int)..(read l2 :: Int)],[(read r1 :: Int)..(read r2 :: Int)::Int]])
+    file "tree.dot"
 
 updateNumberQuery = "UPDATE sumNumber SET number = number + ? WHERE id = 1 returning number"
 resetNumberQuery = "UPDATE sumNumber SET number = ? WHERE id = 1 returning number"
