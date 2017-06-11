@@ -49,6 +49,3 @@ instance (Viz a, Viz b, Viz c) => Viz (a,b,c) where
 
 viz :: Viz a => a -> IO ()
 viz = writeFile "tree.dot" . toDot . toVizTree
-
-vizRest :: Viz a => a -> String
-vizRest = toDot . toVizTree
